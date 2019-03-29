@@ -29,24 +29,25 @@ optimized_runtime_environment(jvm, java).
 
 
 % mobile app facts
-runs_on(mobile_app, android).
-runs_on(mobile_app, iOS).
+mobile_app_os(android).
+mobile_app_os(iOS).
 mobile_app_framework(xamarin).
 mobile_app_framework(flutter).
-mobile_app_language(c_sharp, xamarin).
-mobile_app_langauge(dart, flutter).
+mobile_app_language('C#', xamarin).
+mobile_app_language(dart, flutter).
 mobile_app_ide(xamarin_studio, xamarin).
 mobile_app_ide(android_studio_ide, flutter).
+mobile_app_db(sqlite)
 
 
 %desktop app facts
 desktop_app_language(java).
-desktop_app_language(c_sharp).
+desktop_app_language('C#').
 desktop_app_language(python).
 desktop_app_ide(java,netbeans).
 desktop_app_ide(java, eclipse_IDE).
-desktop_app_ide(c_sharp, visual_studio_IDE).
-desktop_app_ide('c++', visual_studio_IDE).
+desktop_app_ide('C#', visual_studio_IDE).
+desktop_app_ide('C++', visual_studio_IDE).
 desktop_app_ide(python, pycharm_IDE).
 
 % database facts
@@ -55,7 +56,7 @@ database(postgresql).
 database(sqlite).
 make_it_easy_to_interact_with('ORMs',databases).
 use(software_program, databases).
-software_db(mobile_apps, sqlite).
+database(mobile_apps, sqlite).
 orm(java,hibernate_ORM).
 orm(python, sqlalchemy_ORM).
 orm('C++', odb_ORM).
@@ -79,6 +80,7 @@ check_web_app :- write('Does your application have a client side?'), nl,
 
 check_web_app :- nl, write('Sorry, your application is not a web application. Check if it is a stand alone.'),nl.
 
+mobile_app_os :- nl, write('MObile Applications runs on two platforms mainly '), nl, forall(mobile_app_os(X), writeln((X))).
 
 mobile_apps :- nl, write('Mobile Applications can be:'), nl, 
 				write('1. Stand Alone'), nl, 
@@ -93,25 +95,21 @@ mobile_app_tools :- nl, write('Explore the set of tools to build a mobile applic
 						write('2. IDE\'s'), nl, 
 						write('3. Languages'), nl,
 						read(Choice), nl, tool_type(Choice).
-						tool_type(Choice) :- Choice=:=1, nl, write('Here is a list of Languages'), nl, write(mobile_app_framework(Choice)).
-						tool_type(Choice) :- Choice=:=2, nl, write('Here is a list of IDE\'s'), nl, write(mobile_app_ide(Choice)).
-						tool_type(Choice) :- Choice=:=3, nl, write('Here is a list of Languages'), nl, write(mobile_app_langauge(Choice)).
+						tool_type(Choice) :- Choice=:=1, nl, write('Here is a list of mobile frameworks'), nl, forall(mobile_app_framework(X), writeln((X))).
+						tool_type(Choice) :- Choice=:=2, nl, write('Here is a list of IDE\'s'), nl, forall(mobile_app_ide(X, Y), writeln((X, Y))).
+						tool_type(Choice) :- Choice=:=3, nl, write('Here is a list of Languages'), nl, forall(mobile_app_language(X, Y), writeln((X, Y))).
 
-mobile_app_database :- nl, write('Mobile Applications strictly use SQLite database.'),nl. 
-
-
+mobile_app_database :- nl, write('Mobile Applications strictly use SQLite database.'),nl.
 
 desktop_app_tools :- nl, write('Explore the set of tools to build a desktop application. There are: '), nl, 
-						write('1. IDE\'s'), nl, 
-						write('2. Languages'), nl,
+						write('1. Languages'), nl, 
+						write('2. IDE\'s'), nl,
 						read(Choice), nl, desktop_tool_type(Choice).
-						desktop_tool_type(Choice) :- Choice=:=1, nl, write('Here is a list of IDE\'s'), nl, write(desktop_app_language(Choice)).
-						desktop_tool_type(Choice) :- Choice=:=2, nl, write('Here is a list of Languages'), nl, write(desktop_app_ide(Choice)).
+						desktop_tool_type(Choice) :- Choice=:=1, nl, write('Here is a list of Languages'), nl, forall(desktop_app_language(X), writeln((X))).
+						desktop_tool_type(Choice) :- Choice=:=2, nl, write('Here is a list of IDE\'s'), nl, forall(desktop_app_ide(X, Y), writeln((X, Y))).
 
-popular_databases :- nl, write('The most common databases include: '), nl, 
-						write(database(X)), nl,
-						write('Databases use Object Relation Mapping(ORMs) to make coding easer. Here is a a list of popular languages and their ORMs'), nl,
-						orm(X,Y).
+popular_databases :- nl, write('The most common databases include: '), nl, forall(database(X), writeln((X))), nl, 
+						write('Databases use Object Relation Mapping(ORMs) to make coding easer. Here is a list of popular languages and their ORMs'), nl, forall(orm(X,Y), writeln((X,Y))).
 
 
 
