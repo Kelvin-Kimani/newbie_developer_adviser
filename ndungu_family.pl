@@ -41,13 +41,16 @@ female(wambui).
 female(florence). 
 
 % rules
-check_spouse :-
+ask_spouse :-
 	/*
 		read from user who they want to check for. 
 		after which check the spouse of the person in question. 
 	*/
 	write('Enter name to check for someone\'s husband or wife.'), nl, 
 	read(X), nl,
+	check_spouse(X).
+
+check_spouse(X) :-
 	spouse(X, Y), write(X), write(' is husband to '), write(Y);
 	spouse(Y, X), write(X), write(' is wife to '), write(Y).
 
