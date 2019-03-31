@@ -2,6 +2,14 @@
 language(js).
 language(html5).
 language(css3).
+language('C++').
+language('C#').
+language(swift).
+language(kotlin).
+language(python).
+language(js).
+language(java).
+language(php).
 
 runs_on_client(js).
 runs_on_client(html5).
@@ -12,10 +20,6 @@ ui_framework(vue, js).
 ui_framework(react, js).
 ui_framework(bootstrap, css3).
 
-language(python).
-language(js).
-language(java).
-language(php).
 runs_on_server(python).
 runs_on_server(js).
 runs_on_server(java).
@@ -41,22 +45,18 @@ optimized_runtime_environment(jvm, java).
 
 % mobile app facts
 mobile_app_os(android).
-mobile_app_os(iOS).
+mobile_app_os(ios).
 
-tools_for_mobile_os(android, 'Android Studio IDE').
-tools_for_mobile_os(android, 'Java programming language').
-tools_for_mobile_os(android, 'Kotlin programming language').
+tool_for_mobile_os('Android Studio IDE', android).
+tool_for_mobile_os(java, android).
+tool_for_mobile_os(kotlin, android).
 
-tools_for_mobile_os(ios, 'Visual Studio IDE').
-tools_for_mobile_os(ios, 'Swift programming language').
+tool_for_mobile_os('Visual Studio IDE', ios).
+tool_for_mobile_os(swift, ios).
 
-tools_for_mobile_os(both, 'Xamarin Framework which uses C# programming language').
-tools_for_mobile_os(both, 'Flutter Framework which uses Dart programming language').
+mobile_app_framework(xamarin, 'C#').
+mobile_app_framework(flutter, dart).
 
-mobile_app_framework(xamarin).
-mobile_app_framework(flutter).
-mobile_app_language('C#', xamarin).
-mobile_app_language(dart, flutter).
 mobile_app_ide(xamarin_studio, xamarin).
 mobile_app_ide(android_studio_ide, flutter).
 
@@ -96,11 +96,26 @@ standalone.
 % rules
 web_app :- client_side, server_side. 
 mobile_app_db(X) :- database(X), lightweight_db(X).
+
 fast_programming_language(X):- language(X), optimized_runtime_environment(X).
+
 client_side_language(X) :- language(X), runs_on_client(X).
+client_side_language_nd(X) :- setof(X, client_side_language(X), Frameworks),
+									member(X, Frameworks).
+
 server_side_language(X) :- language(X), runs_on_server(X).
-client_side_framework(X, Y) :- client_side_language(Y), ui_framework(X, Y).
-server_side_framework(X, Y) :- server_side_language(Y), web_server_framework(X, Y).
+server_side_language_nd(X) :- setof(X, server_side_language(X), Frameworks),
+									member(X, Frameworks).
+
+client_side_framework(X, Y) :- client_side_language_nd(Y), ui_framework(X, Y).
+client_side_framework_nd(X, Y) :- setof(X-Y, client_side_framework(X, Y), Frameworks),
+									member(X-Y, Frameworks).
+
+server_side_framework(X, Y) :- server_side_language_nd(Y), web_server_framework(X, Y).
+server_side_framework_nd(X, Y) :- setof(X-Y, server_side_framework(X, Y), Frameworks),
+									member(X-Y, Frameworks).
+
+mobile_app_language(X, Y):- language(X), mobile_app_os(Y), tool_for_mobile_os(X, Y).
 
 %UI
 
@@ -143,7 +158,7 @@ building_web_app :-
 
 
 list_server_side_languages:-
-	forall(server_side_language(L), format("* ~t~w language,~n", L)),
+	forall(server_side_language_nd(L), format("* ~t~w language,~n", L)),
 	write(">>> Frameworks make development easier, hence use:"), nl,
 	forall(server_side_framework(F, L),
 	format("* ~t~s framework for ~s language~n", [F, L])).
@@ -151,7 +166,7 @@ list_server_side_languages:-
 
 list_client_side_languages:-
 	write(">>> For client-side use:"), nl,
-	forall(client_side_language(L), format("* ~t~w language,~n", L)),
+	forall(client_side_language_nd(L), format("* ~t~w language,~n", L)),
 	write(">>> Frameworks make development easier, hence use:"), nl,
 	forall(client_side_framework(F, L),
 	format("* ~t~s framework for ~s language~n", [F, L])).
@@ -194,14 +209,8 @@ mobile_app_os :-
 	write("3. Both"), nl,
 	read(C), os_choice(C).
 	os_choice(C) :- C=:=3, write(">>> For both iOS and Android use "),
-					forall(tools_for_mobile_os(both, Z), format("{~w} or ", Z)).
-	os_choice(C) :- C=:=2, write(">>> For iOS use "),
-					forall(tools_for_mobile_os(ios, Z), format("~w, ", Z)).
-	os_choice(_C) :- write(">>> For Android use "),
-					forall(tools_for_mobile_os(android, Z), format("~w, ", Z)).
-		 
-
-
-
-
-
+					forall(mobile_app_language(Z, android), format("{~w} or ", Z)).
+	os_choice(C) :- C=:=2, write(">>> For iOS use:"), nl,
+					forall(mobile_app_language(Z, ios), format("* ~w programming language~n", Z)).
+	os_choice(_C) :- write(">>> For Android use "), nl,
+					forall(mobile_app_language(Z, android), format("* ~w programming language~n", Z)).
