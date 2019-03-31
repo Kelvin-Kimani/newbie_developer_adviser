@@ -48,7 +48,6 @@ mobile_app_language('C#', xamarin).
 mobile_app_language(dart, flutter).
 mobile_app_ide(xamarin_studio, xamarin).
 mobile_app_ide(android_studio_ide, flutter).
-mobile_app_db(sqlite).
 
 
 % desktop app facts
@@ -66,6 +65,7 @@ desktop_app_ide(python, 'PyCharm').
 database(mysql).
 database(postgresql).
 database(sqlite).
+lightweight_db(sqlite).
 make_it_easy_to_interact_with('ORMs',databases).
 use(software_program, databases).
 database(mobile_apps, sqlite).
@@ -82,6 +82,7 @@ standalone.
 
 % rules
 web_app :- client_side, server_side. 
+mobile_app_db(X) :- database(X), lightweight_db(X).
 
 %UI
 
