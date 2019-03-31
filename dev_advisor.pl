@@ -82,7 +82,7 @@ start :- write('Welcome to software development. Software programs are written p
 		 write('1. Web Applications'), nl,
 		 write('2. Mobile Applications'), nl,
 		 write('3. Desktop Applications'), nl,
-		 write('4. Desktop Applications'), nl,
+		 write('4. Database Applications'), nl,
 		 read(Program_choice), program_type(Program_choice).
 
 program_type(Program_choice) :- Program_choice=:=1, nl, check_web_app, web_app_tools.
