@@ -79,22 +79,12 @@ database(sqlite).
 lightweight_db(sqlite).
 
 % ORM details
-make_it_easy_to_interact_with('ORMs',databases).
-use(software_program, databases).
-database(mobile_apps, sqlite).
 orm(java,hibernate_ORM).
 orm(python, sqlalchemy_ORM).
 orm('C++', odb_ORM).
 orm('C#', entity_ORM).
 
-%general facts
-client_side.
-server_side.
-standalone.
-
-
 % rules
-web_app :- client_side, server_side. 
 mobile_app_db(X) :- database(X), lightweight_db(X).
 
 fast_programming_language(X):- language(X), optimized_runtime_environment(X).
