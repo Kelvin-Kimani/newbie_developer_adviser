@@ -1,4 +1,4 @@
-% web app facts
+% Languages
 language(js).
 language(html5).
 language(css3).
@@ -36,12 +36,8 @@ web_server_framework(grails, java).
 web_server_framework(express, js).
 web_server_framework(loopback, js).
 
-lightweight_framework(flask, python).
-heavyweight_framework(django, python).
-
 optimized_runtime_environment(nodejs, js).
 optimized_runtime_environment(jvm, java).
-
 
 % mobile app facts
 mobile_app_os(android).
@@ -66,7 +62,7 @@ desktop_app_language(java).
 desktop_app_language('C#').
 desktop_app_language('C++').
 desktop_app_language(python).
-desktop_app_ide(java,netbeans).
+desktop_app_ide(java, netbeans).
 desktop_app_ide(java, eclipse).
 desktop_app_ide('C#', 'Visual Studio').
 desktop_app_ide('C++', 'Visual Studio').
@@ -79,23 +75,25 @@ database(sqlite).
 lightweight_db(sqlite).
 
 % ORM details
-orm(java,hibernate_ORM).
-orm(python, sqlalchemy_ORM).
-orm('C++', odb_ORM).
-orm('C#', entity_ORM).
+orm(java, hibernate).
+orm(python, sqlalchemy).
+orm('C++', odb).
+orm('C#', entity).
 
 % rules
 mobile_app_db(X) :- database(X), lightweight_db(X).
 
-fast_programming_language(X):- language(X), optimized_runtime_environment(X).
+fast_programming_language(X, Y):- language(X), optimized_runtime_environment(Y, X).
+fast_programming_language_nd(X, Y):- 
+	setof(X-Y, fast_programming_language(X, Y), Languages), member(X-Y, Languages).
 
 client_side_language(X) :- language(X), runs_on_client(X).
-client_side_language_nd(X) :- setof(X, client_side_language(X), Frameworks),
-									member(X, Frameworks).
+client_side_language_nd(X) :- setof(X, client_side_language(X), Languages),
+									member(X, Languages).
 
 server_side_language(X) :- language(X), runs_on_server(X).
-server_side_language_nd(X) :- setof(X, server_side_language(X), Frameworks),
-									member(X, Frameworks).
+server_side_language_nd(X) :- setof(X, server_side_language(X), Languages),
+									member(X, Languages).
 
 client_side_framework(X, Y) :- client_side_language_nd(Y), ui_framework(X, Y).
 client_side_framework_nd(X, Y) :- setof(X-Y, client_side_framework(X, Y), Frameworks),
@@ -135,31 +133,33 @@ building_web_app :-
 	read(C), web_app_side_choice(C).
 
 	web_app_side_choice(C) :-
-		C=:=3, write(">>> For full-stack use "), nl,
+		C=:=3, write(">>> For full-stack use these languages:"), nl,
 		list_client_side_languages,
-		list_server_side_languages.
+		list_server_side_languages;
 
-	web_app_side_choice(C) :-
-		C=:=2, write(">>> For server-side use:"), nl,
-		list_server_side_languages.
+		C=:=2, list_server_side_languages;
 
-	web_app_side_choice(_C) :-
 		list_client_side_languages.
 
 
 list_server_side_languages:-
-	forall(server_side_language_nd(L), format("* ~t~w language,~n", L)),
-	write(">>> Frameworks make development easier, hence use:"), nl,
-	forall(server_side_framework(F, L),
-	format("* ~t~s framework for ~s language~n", [F, L])).
+	write(">>> For server-side use these languages:"), nl,
+	forall(server_side_language_nd(L), format("* ~t~s,~n", L)),
+	write(">>> It is worth noting that these languges run faster"), nl,
+	forall(fast_programming_language_nd(X, _Y), format("* ~t~s,~n", X)),
+	write("Which language would you prefer to use?"), nl,
+	read(X), server_side_language_choice(X).
+	server_side_language_choice(X):-
+		forall(server_side_framework(F, X), format("* Use ~s framework or ", F)), nl,
+		write(">>> If you will need to use a database, use these Object Relational Mappers:"),
+		forall(orm(X, Y), format("* ~s ORM or ", Y)).
 
 
 list_client_side_languages:-
-	write(">>> For client-side use:"), nl,
-	forall(client_side_language_nd(L), format("* ~t~w language,~n", L)),
-	write(">>> Frameworks make development easier, hence use:"), nl,
-	forall(client_side_framework(F, L),
-	format("* ~t~s framework for ~s language~n", [F, L])).
+	write(">>> For client-side use these languages:"), nl,
+	forall(client_side_language_nd(L), format("* ~t~s,~n", L)),
+	write(">>> Also use these client side frameworks"), nl,
+	forall(client_side_framework(F, L), format("* For ~s language use ~s framework~n", [L, F])).
 
 
 building_mobile_app :-
@@ -173,13 +173,13 @@ building_mobile_app :-
 building_desktop_app :-
 	nl,
 	write("Desktop apps can be built using:"), nl,
-	forall(desktop_app_language(Z), format("* ~w\n", Z)),
+	forall(desktop_app_language(Z), format("* ~s\n", Z)),
 	write("Which langauge would you want to use?"), nl,
 	read(C), desktop_language_choice(C).
 	
 	desktop_language_choice(C) :-
 		desktop_app_ide(C, IDE),
-		format(">>> For ~w use ~w IDE", [C, IDE]).
+		format(">>> For ~s use ~s IDE", [C, IDE]).
 	desktop_language_choice(_C) :- write("Could not determine which IDE to use for that language"), nl.
 
 
@@ -198,9 +198,11 @@ mobile_app_os :-
 	write("2. iOS"), nl,
 	write("3. Both"), nl,
 	read(C), os_choice(C).
-	os_choice(C) :- C=:=3, write(">>> For both iOS and Android use "),
-					forall(mobile_app_language(Z, android), format("{~w} or ", Z)).
+	os_choice(C) :- C=:=3, write(">>> For both iOS and Android use "), nl,
+					forall(mobile_app_framework(X, Y), format("* Use ~s framework with ~s or~n", [X, Y])),
+					write(">>> Furthermore:"), nl,
+					forall(mobile_app_framework(X, Y), format("* Use ~s framework with ~s IDE or~n", [X, Y])).
 	os_choice(C) :- C=:=2, write(">>> For iOS use:"), nl,
-					forall(mobile_app_language(Z, ios), format("* ~w programming language~n", Z)).
+					forall(mobile_app_language(Z, ios), format("* ~s programming language~n", Z)).
 	os_choice(_C) :- write(">>> For Android use "), nl,
-					forall(mobile_app_language(Z, android), format("* ~w programming language~n", Z)).
+					forall(mobile_app_language(Z, android), format("* ~s programming language~n", Z)).
