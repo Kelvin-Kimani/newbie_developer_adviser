@@ -1,29 +1,40 @@
 % web app facts
-client_side_language(js).
-client_side_language(html5).
-client_side_language(css3).
-easier_to_build_using(software,framework).
-client_side_framework(angular, js).
-client_side_framework(vue, js).
-client_side_framework(react, js).
-client_side_framework(bootstrap, css3).
-server_side_language(python).
-server_side_language(js).
-server_side_language(java).
-server_side_language(php).
-server_side_framework(flask, python).
-server_side_framework(django, python).
-server_side_framework(cake, php).
-server_side_framework(laravel, php).
-server_side_framework(yii, php).
-server_side_framework(spark, java).
-server_side_framework(spring, java).
-server_side_framework(grails, java).
-server_side_framework(express, js).
-server_side_framework(loopback, js).
+language(js).
+language(html5).
+language(css3).
+
+runs_on_client(js).
+runs_on_client(html5).
+runs_on_client(css3).
+
+ui_framework(angular, js).
+ui_framework(vue, js).
+ui_framework(react, js).
+ui_framework(bootstrap, css3).
+
+language(python).
+language(js).
+language(java).
+language(php).
+runs_on_server(python).
+runs_on_server(js).
+runs_on_server(java).
+runs_on_server(php).
+
+web_server_framework(flask, python).
+web_server_framework(django, python).
+web_server_framework(cake, php).
+web_server_framework(laravel, php).
+web_server_framework(yii, php).
+web_server_framework(spark, java).
+web_server_framework(spring, java).
+web_server_framework(grails, java).
+web_server_framework(express, js).
+web_server_framework(loopback, js).
+
 lightweight_framework(flask, python).
 heavyweight_framework(django, python).
-executes_faster_on(software,optimized_runtime_environment).
+
 optimized_runtime_environment(nodejs, js).
 optimized_runtime_environment(jvm, java).
 
@@ -66,6 +77,8 @@ database(mysql).
 database(postgresql).
 database(sqlite).
 lightweight_db(sqlite).
+
+% ORM details
 make_it_easy_to_interact_with('ORMs',databases).
 use(software_program, databases).
 database(mobile_apps, sqlite).
@@ -83,6 +96,11 @@ standalone.
 % rules
 web_app :- client_side, server_side. 
 mobile_app_db(X) :- database(X), lightweight_db(X).
+fast_programming_language(X):- language(X), optimized_runtime_environment(X).
+client_side_language(X) :- language(X), runs_on_client(X).
+server_side_language(X) :- language(X), runs_on_server(X).
+client_side_framework(X, Y) :- client_side_language(Y), ui_framework(X, Y).
+server_side_framework(X, Y) :- server_side_language(Y), web_server_framework(X, Y).
 
 %UI
 
@@ -134,7 +152,7 @@ list_server_side_languages:-
 list_client_side_languages:-
 	write(">>> For client-side use:"), nl,
 	forall(client_side_language(L), format("* ~t~w language,~n", L)),
-	write(">>> Frameworks make development easier, hence use:~n"), nl,
+	write(">>> Frameworks make development easier, hence use:"), nl,
 	forall(client_side_framework(F, L),
 	format("* ~t~s framework for ~s language~n", [F, L])).
 
