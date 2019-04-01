@@ -1,172 +1,224 @@
-% kinds of software programs
-software_program(web_apps).
-software_program(mobile_apps).
-software_program(desktop_apps).
-easier_to_build_using(software_program,framework).
+% Languages
+language(js).
+language(html5).
+language(css3).
+language('C++').
+language('C#').
+language(swift).
+language(kotlin).
+language(python).
+language(js).
+language(java).
+language(php).
 
-% web app facts
-client_side_language(js).
-client_side_language(html5).
-client_side_language(css3).
-client_side_framework(angular, js).
-client_side_framework(vue, js).
-client_side_framework(react, js).
-client_side_framework(bootstrap, css3).
-server_side_language(python).
-server_side_language(js).
-server_side_language(java).
-server_side_language(php).
-server_side_framework(flask, python).
-server_side_framework(django, python).
-server_side_framework(cake, php).
-server_side_framework(laravel, php).
-server_side_framework(yii, php).
-server_side_framework(spark, java).
-server_side_framework(spring, java).
-server_side_framework(grails, java).
-server_side_framework(express, js).
-server_side_framework(loopback, js).
-lightweight_framework(flask, python).
-heavyweight_framework(django, python).
-executes_faster_on(software,optimized_runtime_environment).
+runs_on_client(js).
+runs_on_client(html5).
+runs_on_client(css3).
+
+ui_framework(angular, js).
+ui_framework(vue, js).
+ui_framework(react, js).
+ui_framework(bootstrap, css3).
+
+runs_on_server(python).
+runs_on_server(js).
+runs_on_server(java).
+runs_on_server(php).
+
+web_server_framework(flask, python).
+web_server_framework(django, python).
+web_server_framework(cake, php).
+web_server_framework(laravel, php).
+web_server_framework(yii, php).
+web_server_framework(spark, java).
+web_server_framework(spring, java).
+web_server_framework(grails, java).
+web_server_framework(express, js).
+web_server_framework(loopback, js).
+
 optimized_runtime_environment(nodejs, js).
 optimized_runtime_environment(jvm, java).
 
-
 % mobile app facts
 mobile_app_os(android).
-mobile_app_os(iOS).
-mobile_app_framework(xamarin).
-mobile_app_framework(flutter).
-mobile_app_language('C#', xamarin).
-mobile_app_language(dart, flutter).
+mobile_app_os(ios).
+
+tool_for_mobile_os('Android Studio IDE', android).
+tool_for_mobile_os(java, android).
+tool_for_mobile_os(kotlin, android).
+
+tool_for_mobile_os('Visual Studio IDE', ios).
+tool_for_mobile_os(swift, ios).
+
+mobile_app_framework(xamarin, 'C#').
+mobile_app_framework(flutter, dart).
+
 mobile_app_ide(xamarin_studio, xamarin).
 mobile_app_ide(android_studio_ide, flutter).
-mobile_app_db(sqlite).
 
 
 % desktop app facts
 desktop_app_language(java).
 desktop_app_language('C#').
+desktop_app_language('C++').
 desktop_app_language(python).
-desktop_app_ide(java,netbeans).
-desktop_app_ide(java, eclipse_IDE).
-desktop_app_ide('C#', visual_studio_IDE).
-desktop_app_ide('C++', visual_studio_IDE).
-desktop_app_ide(python, pycharm_IDE).
+desktop_app_ide(java, netbeans).
+desktop_app_ide(java, eclipse).
+desktop_app_ide('C#', 'Visual Studio').
+desktop_app_ide('C++', 'Visual Studio').
+desktop_app_ide(python, 'PyCharm').
 
 % database facts
 database(mysql).
 database(postgresql).
 database(sqlite).
-make_it_easy_to_interact_with('ORMs',databases).
-use(software_program, databases).
-database(mobile_apps, sqlite).
-orm(java,hibernate_ORM).
-orm(python, sqlalchemy_ORM).
-orm('C++', odb_ORM).
-orm('C#', entity_ORM).
+lightweight_db(sqlite).
 
-%general facts
-client_side.
-server_side.
-standalone.
-
+% ORM details
+orm(java, hibernate).
+orm(python, sqlalchemy).
+orm(js, sequelize).
+orm(php, eloquent).
+orm('C++', odb).
+orm('C#', entity).
 
 % rules
-web_app :- client_side, server_side. 
+mobile_app_db(X) :- database(X), lightweight_db(X).
+
+fast_programming_language(X, Y):- language(X), optimized_runtime_environment(Y, X).
+fast_programming_language_nd(X, Y):- 
+	setof(X-Y, fast_programming_language(X, Y), Languages), member(X-Y, Languages).
+
+client_side_language(X) :- language(X), runs_on_client(X).
+client_side_language_nd(X) :- setof(X, client_side_language(X), Languages),
+									member(X, Languages).
+
+server_side_language(X) :- language(X), runs_on_server(X).
+server_side_language_nd(X) :- setof(X, server_side_language(X), Languages),
+									member(X, Languages).
+
+client_side_framework(X, Y) :- client_side_language_nd(Y), ui_framework(X, Y).
+client_side_framework_nd(X, Y) :- setof(X-Y, client_side_framework(X, Y), Frameworks),
+									member(X-Y, Frameworks).
+
+server_side_framework(X, Y) :- server_side_language_nd(Y), web_server_framework(X, Y).
+server_side_framework_nd(X, Y) :- setof(X-Y, server_side_framework(X, Y), Frameworks),
+									member(X-Y, Frameworks).
+
+mobile_app_language(X, Y):- language(X), mobile_app_os(Y), tool_for_mobile_os(X, Y).
+
+mobile_app_tool(X, Y) :- tool_for_mobile_os(X, Y), mobile_app_os(Y), !.
 
 %UI
-start :- write('Welcome to software development. Software programs are written programs or procedures or rules and associated documentation pertaining to the operation of a computer system.'), nl, 
-		 write('Check for tools to use for different software programs. Select the software program you want to explore.'), nl,
-		 write('1. Web Applications'), nl,
-		 write('2. Mobile Applications'), nl,
-		 write('3. Desktop Applications'), nl,
-		 write('4. Database Applications'), nl,
-		 read(Program_choice), program_type(Program_choice).
 
-program_type(Program_choice) :- Program_choice=:=1, nl, check_web_app, web_app_tools.
-program_type(Program_choice) :- Program_choice=:=2, nl, mobile_app_os, mobile_apps, mobile_app_tools, mobile_app_db.
-program_type(Program_choice) :- Program_choice=:=3, nl, desktop_app_tools.
-program_type(Program_choice) :- Program_choice=:=4, nl, popular_databases.
+% Determine kind of application
+find_out_software :-
+	write('Welcome to software development. Software programs are written programs or procedures or rules and associated documentation pertaining to the operation of a computer system.'), nl, nl, 
+	write('>>> A Web application is an application program that is stored on a remote server and delivered over the Internet through a browser interface.'), nl,
+	write('>>> A Mobile application is a type of application software designed to run on a mobile device'), nl,
+	write('>>> A Desktop application is any software that can be installed on a single computer and used to perform specific tasks.'), nl, nl, 
+	write('Check tools to use for different software programs.'), nl,
+	
+	write("Do you want to build a Web application? (y/n)"), nl,
+	read(X), nl,
+	X=y, building_web_app;
 
+	write("Do you want to build a Mobile application? (y/n)"), nl,
+	read(X), nl,
+	X=y, building_mobile_app;
 
-check_software_programs :- write('Software programs include: '), nl, forall(software_program(X), writeln((X))).
+	write("Do you want to build a Desktop application? (y/n)"), nl,
+	read(X), nl,
+	X=y, building_desktop_app;
 
-check_web_app :- write('Does your application have a client side?'), nl, 
-				 read(Client_side), Client_side=yes, nl, nl, 
-				 write('Does your application have a server side?'), nl, 
-				 read(Server_side), Server_side=yes, nl, 
-				 write('Your application is a web application!'), nl.
-
-check_web_app :- nl, write('Sorry, your application is not a web application. Check if it is a stand alone.'),nl.
-
-web_app_tools :- nl, write('Explore the set of tools to build a web application. There are:'),nl,
-						write('1. Client Side Tools'), nl, 
-						write('2. Server Side Tools'), nl, 
-						read(Choice), web_app_type(Choice).
-						web_app_type(Choice) :- Choice=:=1, nl, write('Client Side tools can be divided into; '), nl, 
-												write('1. Language'), nl,
-												write('2. Framework'), nl,
-												read(Tool_Choice), client_tool_type(Tool_Choice).
-												client_tool_type(Tool_Choice) :- Tool_Choice=:=1, nl, write('Here is a list of languages'), nl, forall(client_side_language(X), writeln((X))).
-												client_tool_type(Tool_Choice) :- Tool_Choice=:=2, nl, write('Here is a list of framework and the languages they support'), nl, forall(client_side_framework(X, Y), writeln((X, Y))).
-
-						web_app_type(Choice) :- Choice=:=2, nl, write('Server Side tools can be divided into; '), nl, 
-												write('1. Language'), nl,
-												write('2. Framework'), nl,
-												write('3. Runtime Environments'), nl,
-												read(Tool_Choice), server_tool_type(Tool_Choice).
-												server_tool_type(Tool_Choice) :- Tool_Choice=:=1, nl, write('Here is a list of languages'), nl, forall(server_side_language(X), writeln((X))).
-												server_tool_type(Tool_Choice) :- Tool_Choice=:=2, nl, write('Here is a list of framework and the languages they support'), nl, forall(server_side_framework(X, Y), writeln((X, Y))).
-												server_tool_type(Tool_Choice) :- Tool_Choice=:=3, nl, write('Here is a list of optimized runtime environments and the languages they support'), nl, forall(server_side_framework(X, Y), writeln((X, Y))).
+	write(">>> Sorry, cannot determine which classification your application falls under.").
 
 
-mobile_app_os :- nl, write('Mobile Applications runs on two platforms mainly '), nl, forall(mobile_app_os(X), writeln((X))).
+building_web_app :-
+	write('>>> A Web application has two main structural components; a client and a server.'),nl,
+	write('	~> A client is a user-friendly representation of a web app’s functionality that a user interacts with.'), nl,
+	write('	~> A server is provides a service required by the user, usually contains the business logic.'), nl,nl,
+	write("Which side are you building?"), nl,
+	write("1. Client-side(default)"), nl,
+	write("2. Server-side"), nl,
+	write("3. Full-stack(Both the client-side and server-side)"), nl,
 
-mobile_apps :- nl, write('Mobile Applications can be:'), nl, 
-				write('1. Stand Alone'), nl, 
-				write('2. Clients'), nl,
-				write('Which one do you wish to explore?'), nl,
-				read(Choice), nl, app_type(Choice).
-				app_type(Choice) :- Choice=:=1, nl, 
-									write('These apps have everything bundled within them. They do not require constant network connectivity to download and process the data.'), nl.
-				app_type(Choice) :- Choice=:=2, nl,
-									 write('These apps act as a client to provide a front-end to another application running on a server somewhere.'), nl.
+	read(C), web_app_side_choice(C).
 
-mobile_app_tools :- nl, write('Explore the set of tools to build a mobile application. There are: '), nl,
-						write('1. Frameworks'), nl, 
-						write('2. IDE\'s'), nl, 
-						write('3. Languages'), nl,
-						read(Choice), nl, tool_type(Choice).
-						tool_type(Choice) :- Choice=:=1, nl, write('Here is a list of mobile frameworks'), nl, forall(mobile_app_framework(X), writeln((X))).
-						tool_type(Choice) :- Choice=:=2, nl, write('Here is a list of IDE\'s'), nl, forall(mobile_app_ide(X, Y), writeln((X, Y))).
-						tool_type(Choice) :- Choice=:=3, nl, write('Here is a list of Languages'), nl, forall(mobile_app_language(X, Y), writeln((X, Y))).
+	web_app_side_choice(C) :-
+		C=:=3, write(">>> For full-stack use these languages:"), nl,
+		list_client_side_languages,
+		list_server_side_languages;
 
-mobile_app_database :- nl, write('Mobile Applications strictly use SQLite database.'),nl.
+		C=:=2, list_server_side_languages;
 
-desktop_app_tools :- nl, write('Explore the set of tools to build a desktop application. There are: '), nl, 
-						write('1. Languages'), nl, 
-						write('2. IDE\'s'), nl,
-						read(Choice), nl, desktop_tool_type(Choice).
-						desktop_tool_type(Choice) :- Choice=:=1, nl, write('Here is a list of Languages'), nl, forall(desktop_app_language(X), writeln((X))).
-						desktop_tool_type(Choice) :- Choice=:=2, nl, write('Here is a list of IDE\'s'), nl, forall(desktop_app_ide(X, Y), writeln((X, Y))).
-
-popular_databases :- nl, write('The most common databases include: '), nl, forall(database(X), writeln((X))), nl, 
-						write('Databases use Object Relation Mapping(ORMs) to make coding easer. Here is a list of popular languages and their ORMs'), nl, forall(orm(X,Y), writeln((X,Y))).
+		list_client_side_languages.
 
 
+list_server_side_languages:-
+	write(">>> For server-side use these languages:"), nl,
+	forall(server_side_language_nd(L), format("* ~t~s,~n", L)),
+	write(">>> It is worth noting that these languges run faster"), nl,
+	forall(fast_programming_language_nd(X, _Y), format("* ~t~s,~n", X)),
+	write("Which language would you prefer to use?"), nl,
+	read(X), server_side_language_choice(X).
+	server_side_language_choice(X):-
+		write('Use either of the listed frameworks.(Frameworks makes software building easy).'),nl,
+		forall(server_side_framework(F, X), format("* ~s framework ~n", F)), nl,
+		write(">>> If you will need to use a database, use these Object Relational Mappers:"),
+		forall(orm(X, Y), format("* ~s ORM ", Y)).
 
 
+list_client_side_languages:-
+	write(">>> For client-side use these languages:"), nl,
+	forall(client_side_language_nd(L), format("* ~t~s,~n", L)),
+	write(">>> Also use these client side frameworks(Frameworks makes software building easy)."), nl,
+	forall(client_side_framework(F, L), format("* For ~s language use ~s framework~n", [L, F])).
 
 
+building_mobile_app :-
+	nl,
+	write("Should it use a database? (y/n)"), nl,
+	read(X), db_choice(X).
+	db_choice(X) :- X=y, mobile_app_with_db.
+	db_choice(_X) :- mobile_app_os.
 
 
+building_desktop_app :-
+	nl,
+	write("Desktop apps can be built using:"), nl,
+	forall(desktop_app_language(Z), format("* ~s\n", Z)),
+	write("Which langauge would you want to use?"), nl,
+	read(C), desktop_language_choice(C).
+	
+	desktop_language_choice(C) :-
+		desktop_app_ide(C, IDE),
+		format(">>> For ~s use ~s IDE", [C, IDE]).
+	desktop_language_choice(_C) :- write("Could not determine which IDE to use for that language"), nl.
 
 
-				 
+mobile_app_with_db :-
+	write(">>> You should use ["),
+	forall(mobile_app_db(Z), write(Z)),
+	write("] as possible databases."), nl,
+	write(">>> This is because mobile phones have smaller memory hence using a light-weight database is preferrable"), nl,
+	mobile_app_os.
 
 
-
-
-
+mobile_app_os :-
+	nl,
+	write("Which Mobile OS are you building an app for?"), nl,
+	write("1. Android (default)"), nl,
+	write("2. iOS"), nl,
+	write("3. Both"), nl,
+	read(C), os_choice(C).
+	os_choice(C) :- C=:=3, write(">>> For both iOS and Android use "), nl,
+					forall(mobile_app_framework(X, Y), format("* Use ~s framework with ~s language or~n", [X, Y])),
+					write(">>> Furthermore:"), nl,
+					forall(mobile_app_ide(X, Y), format("* Use ~s IDE for ~s framework or~n", [X, Y])).
+	os_choice(C) :- C=:=2, write(">>> For iOS use:"), nl,
+					forall(mobile_app_language(Z, ios), format("* ~s programming language~n", Z)), nl,
+					forall(mobile_app_tool(X, ios), format('Also use ~s', X)).
+	os_choice(_C) :- write(">>> For Android use "), nl,
+					forall(mobile_app_language(Z, android), format("* ~s programming language~n", Z)), nl,
+					forall(mobile_app_tool(X, android), format('Also use ~s', X)).
