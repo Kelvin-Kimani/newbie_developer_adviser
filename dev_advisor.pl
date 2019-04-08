@@ -94,11 +94,8 @@ server_side_framework(X, Y) :- server_side_language(Y), web_server_framework(X, 
 
 mobile_app_language(X, Y):- language(X), mobile_app_os(Y), tool_for_mobile_os(X, Y).
 
-<<<<<<< Updated upstream
-=======
 mobile_app_tool(X, Y) :- tool_for_mobile_os(X, Y), mobile_app_os(Y).
 
->>>>>>> Stashed changes
 %UI
 
 % Determine kind of application
