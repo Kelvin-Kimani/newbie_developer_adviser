@@ -1,5 +1,4 @@
 % Languages
-language(js).
 language(html5).
 language(css3).
 language('C++').
@@ -84,27 +83,22 @@ orm('C#', entity).
 mobile_app_db(X) :- database(X), lightweight_db(X).
 
 fast_programming_language(X, Y):- language(X), optimized_runtime_environment(Y, X).
-fast_programming_language_nd(X, Y):- 
-	setof(X-Y, fast_programming_language(X, Y), Languages), member(X-Y, Languages).
 
 client_side_language(X) :- language(X), runs_on_client(X).
-client_side_language_nd(X) :- setof(X, client_side_language(X), Languages),
-									member(X, Languages).
 
 server_side_language(X) :- language(X), runs_on_server(X).
-server_side_language_nd(X) :- setof(X, server_side_language(X), Languages),
-									member(X, Languages).
 
-client_side_framework(X, Y) :- client_side_language_nd(Y), ui_framework(X, Y).
-client_side_framework_nd(X, Y) :- setof(X-Y, client_side_framework(X, Y), Frameworks),
-									member(X-Y, Frameworks).
+client_side_framework(X, Y) :- client_side_language(Y), ui_framework(X, Y).
 
-server_side_framework(X, Y) :- server_side_language_nd(Y), web_server_framework(X, Y).
-server_side_framework_nd(X, Y) :- setof(X-Y, server_side_framework(X, Y), Frameworks),
-									member(X-Y, Frameworks).
+server_side_framework(X, Y) :- server_side_language(Y), web_server_framework(X, Y).
 
 mobile_app_language(X, Y):- language(X), mobile_app_os(Y), tool_for_mobile_os(X, Y).
 
+<<<<<<< Updated upstream
+=======
+mobile_app_tool(X, Y) :- tool_for_mobile_os(X, Y), mobile_app_os(Y).
+
+>>>>>>> Stashed changes
 %UI
 
 % Determine kind of application
@@ -144,9 +138,9 @@ building_web_app :-
 
 list_server_side_languages:-
 	write(">>> For server-side use these languages:"), nl,
-	forall(server_side_language_nd(L), format("* ~t~s,~n", L)),
+	forall(server_side_language(L), format("* ~t~s,~n", L)),
 	write(">>> It is worth noting that these languges run faster"), nl,
-	forall(fast_programming_language_nd(X, _Y), format("* ~t~s,~n", X)),
+	forall(fast_programming_language(X, _Y), format("* ~t~s,~n", X)),
 	write("Which language would you prefer to use?"), nl,
 	read(X), server_side_language_choice(X).
 	server_side_language_choice(X):-
@@ -157,8 +151,13 @@ list_server_side_languages:-
 
 list_client_side_languages:-
 	write(">>> For client-side use these languages:"), nl,
+<<<<<<< Updated upstream
 	forall(client_side_language_nd(L), format("* ~t~s,~n", L)),
 	write(">>> Also use these client side frameworks"), nl,
+=======
+	forall(client_side_language(L), format("* ~t~s,~n", L)),
+	write(">>> Also use these client side frameworks(Frameworks makes software building easy)."), nl,
+>>>>>>> Stashed changes
 	forall(client_side_framework(F, L), format("* For ~s language use ~s framework~n", [L, F])).
 
 
