@@ -151,13 +151,8 @@ list_server_side_languages:-
 
 list_client_side_languages:-
 	write(">>> For client-side use these languages:"), nl,
-<<<<<<< Updated upstream
-	forall(client_side_language_nd(L), format("* ~t~s,~n", L)),
-	write(">>> Also use these client side frameworks"), nl,
-=======
 	forall(client_side_language(L), format("* ~t~s,~n", L)),
 	write(">>> Also use these client side frameworks(Frameworks makes software building easy)."), nl,
->>>>>>> Stashed changes
 	forall(client_side_framework(F, L), format("* For ~s language use ~s framework~n", [L, F])).
 
 
