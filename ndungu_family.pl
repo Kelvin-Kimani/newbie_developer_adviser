@@ -1,8 +1,11 @@
-% begin family from Samuel Ndungu and Nancy Wanjiru. 
-% Other spouses will be listed here also.
+%root spouse from Samuel Ndungu and Nancy Wanjiru.
 spouse(ndungu, nancy).
+
+%spouses second in line.
 spouse(kimani, florence).
 spouse(mbugua, stella).
+spouse(mwicigi, wanjiru).
+spouse(nganga, sue).
 
 
 % declare all the children of Samuel Ndungu denoted as ndungu
@@ -20,6 +23,57 @@ parent(ndungu, wambui).
 parent(ndungu, wanja). 
 parent(ndungu, ngugi). 
 
+
+%declare all children of Moses Kimani as kimani.
+parent(kimani, geoffrey).
+parent(kimani, kelvin).
+parent(kimani, faith).
+
+
+%declare all children of John Mwicigi as mwicigi.
+parent(mwicigi, imelda).
+parent(mwicigi, ian).
+parent(mwicigi, dannis).
+
+
+%declare all children of Selina as selina.
+parent(selina, trizah).
+parent(selina, 'Nancy Wanjiru I').
+
+
+%declare all children of Hannah as hannah.
+parent(hannah, 'Kelvin Ndungu').
+parent(hannah, njenga).
+
+
+%declare al children of James Mbugua as mbugua.
+parent(mbugua, james).
+parent(mbugua, nate).
+
+
+%declare all children of Jane Wangui as wangui.
+parent(wangui, monica).
+
+
+%declare all children of Milka as milka.
+parent(milka, charlo).
+parent(milka, blessing).
+parent(milka, 'the third born, I dont remember her name').
+
+
+%declare all children of Mukami as mukami.
+parent(mukami, jason).
+parent(mukami, esperanza).
+
+
+%declare all chilfren of Geoffrey Nganga as nganga.
+parent(nganga, grayson).
+
+
+%declare all children of Wambui as wambui.
+parent(wambui, 'Ndungu').
+
+
 % males in the family
 male(ndungu). 
 male(kimani).
@@ -27,6 +81,18 @@ male(mwicigi).
 male(mbugua).
 male(nganga).
 male(ngugi).
+male(geoffrey).
+male(kelvin).
+male(ian).
+male(dannis).
+male('Kelvin Ndungu').
+male(njenga).
+male(james).
+male(nate).
+male(charlo).
+male(jason).
+male(grayson).
+male('Ndungu').
 
 % female in the family
 female(nancy). 
@@ -39,6 +105,14 @@ female(wanja).
 female(milka). 
 female(wambui). 
 female(florence). 
+female(faith).
+female(imelda).
+female(trizah).
+female('Nancy Wanjiru I').
+female(monica).
+female(blessing).
+female('the third born, I dont remember her name').
+female(esperanza).
 
 % rules
 ask_spouse :-
@@ -112,11 +186,10 @@ sister(X,Y):-
 	female(X).
 
 
-
-
-/*predecessor(X, Y) :-
+predecessor(X, Y) :-
 	parent(X, Y).
 
+%predecessor to the second generation
 predecessor(X, Y) :-
 	parent(X, Z),
 	predecessor(Z, Y).
@@ -132,7 +205,6 @@ grandfather(X,Z):-
 grandmother(X,Z):-
 	parent(X,Y),
 	female(X).
-*/
 
 
 % state all the males in the family
